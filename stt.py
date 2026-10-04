@@ -1,33 +1,23 @@
-from faster_whisper import WhisperModel
+"""
+Root entry point / convenience script for Stage 1: Speech-to-Text.
+Delegates to modular implementation in src.stt.transcriber.
+"""
 
-print("Loading Whisper model...")
+from pathlib import Path
+from src.stt.transcriber import transcribe_audio, get_whisper_model
 
-model = WhisperModel(
-    "large-v3-turbo",
-    device="cpu",
-    compute_type="int8"
-)
+if __name__ == "__main__":
+    from src.utils.config import ASSETS_DIR, PROJECT_ROOT
 
-print("Model loaded!")
+    # Look for sample audio in assets/audio/ or root
+    sample_path = ASSETS_DIR / "audio" / "whatsapp-audio-2026-10-04-at-50909-pm_Sgw8gMZq.mp3"
+    if not sample_path.exists():
+        sample_path = PROJECT_ROOT / "whatsapp-audio-2026-10-04-at-50909-pm_Sgw8gMZq.mp3"
 
-
-def transcribe_audio(audio_file):
-    segments, info = model.transcribe(
-        audio_file,
-        beam_size=5,
-        vad_filter=True
-    )
-
-    transcript = " ".join(segment.text for segment in segments)
-
-    return transcript
-
-
-audio_file = r"D:\Inter-IIT bootcamp\WhatsApp Audio 2026-10-04 at 5.09.09 PM.mpeg"
-
-print("Transcribing...")
-
-text = transcribe_audio(audio_file)
-
-print("\n--- TRANSCRIPT ---")
-print(text)
+    if sample_path.exists():
+        print(f"Transcribing: {sample_path}")
+        text = transcribe_audio(sample_path)
+        print("\n--- TRANSCRIPT ---")
+        print(text)
+    else:
+        print("Sample audio file not found. Please provide an audio file path.")
