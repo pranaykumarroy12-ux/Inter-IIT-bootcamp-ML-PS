@@ -1,0 +1,8 @@
+streamlit
+faster-whisper        # for Whisper ASR (pip install faster-whisper)
+ffmpeg-python        # audio decoding
+openai               # if using OpenAI/Gemini API
+transformers         # HuggingFace (if using local LLMs or Whisper pipeline)
+pydantic             # for JSON schema enforcement
+python-dotenv        # (optional) for API keys
+pyannote.audio       # (optional) for speaker diarization
