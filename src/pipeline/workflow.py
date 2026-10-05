@@ -36,15 +36,14 @@ class MeetingPipeline:
 
     def run_pipeline(self, audio_path: Union[str, Path]) -> Dict[str, Any]:
         """
-        Runs the end-to-end pipeline.
-        Note: Stage 3 is currently pending implementation.
+        Runs the full end-to-end pipeline (Stage 1 -> Stage 2 -> Stage 3).
         """
         raw_transcript = self.run_transcription(audio_path)
         refined_transcript = self.run_refinement(raw_transcript)
+        documentation = self.run_documentation(refined_transcript)
         
-        # When Stage 3 is implemented, documentation will be called here
         return {
             "raw_transcript": raw_transcript,
             "refined_transcript": refined_transcript,
-            "documentation": None  # Stage 3 placeholder
+            "documentation": documentation
         }

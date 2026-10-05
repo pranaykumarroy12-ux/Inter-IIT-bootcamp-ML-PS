@@ -1,4 +1,4 @@
-# AI-Powered Meeting Assistant
+﻿# AI-Powered Meeting Assistant
 
 > **Inter-IIT Tech Meet 15.0 — ML Bootcamp (Phase 2)**  
 > **Organized by IIT Guwahati Tech Board**  
@@ -101,7 +101,7 @@ Refined Transcript
   │
   ▼
 [ Stage 3: Meeting Documentation ]
-  │  (Status: Not implemented/selected yet)
+  │  (Status: Implemented)
   ▼
 Structured Final Record
   ├── Meeting Summary & Minutes
@@ -129,7 +129,7 @@ Structured Final Record
 |---|---|---|---|
 | **Stage 1: Speech-to-Text** | `faster-whisper-large-v3-turbo` | mobiuslabsgmbh / OpenAI Whisper Large v3 Turbo, int8 CPU execution | **Implemented & Verified Working** |
 | **Stage 2: Transcript Refinement** | `gemini-3.5-flash-lite` | Google GenAI SDK (`google-genai`), contextual zero-shot refinement | **Implemented & Verified Working** |
-| **Stage 3: Meeting Documentation** | *Not implemented/selected yet* | Pending selection in Checkpoint 4 (options: Gemini 3.5 Flash / Gemini 2.5 Flash / local LLM) | **Not implemented/selected yet** |
+| **Stage 3: Meeting Documentation** | *Implemented* | Implemented via Gemini 3.5 Flash (options: Gemini 3.5 Flash / Gemini 2.5 Flash / local LLM) | **Implemented** |
 
 ---
 
@@ -175,7 +175,7 @@ Inter-IIT-bootcamp-ML-PS/
 │
 ├── assets/                     # Media assets and sample meeting recordings
 │   └── audio/
-│       └── WhatsApp Audio 2026-10-04 at 5.09.09 PM.mpeg  # Sample lecture audio (~13.3 min)
+│       └── whatsapp-audio-2026-10-04-at-50909-pm_Sgw8gMZq.mp3  # Sample lecture audio (~2 min)
 │
 ├── outputs/                    # Output directory for transcripts and JSON/MD records
 │   └── .gitkeep

@@ -1,4 +1,4 @@
-# Developer & Engineering Architecture Guide (DEV_GUIDE.md)
+﻿# Developer & Engineering Architecture Guide (DEV_GUIDE.md)
 
 > **Document Purpose:** This is an internal technical reference for developers and coding agents working on the AI-Powered Meeting Assistant project (Inter-IIT Bootcamp ML PS). It documents the current codebase, architectural decisions, model integrations, data flows, and strict development guardrails.
 
@@ -9,7 +9,7 @@
 - **Stage 1 (Speech-to-Text):** `DONE` — Implemented in `src/stt/transcriber.py` using `faster-whisper` (`large-v3-turbo`) with int8 quantization on CPU. Lazy loading enabled. Independently verified with tests.
 - **Stage 2 (Domain-Aware Refinement):** `DONE` — Implemented in `src/refinement/refiner.py` using Google Gemini (`gemini-3.5-flash-lite`) via `google-genai` SDK. Prompt template externalized to `prompts/stage2_refine.txt`. Independently verified with tests.
 - **Stage 1 → Stage 2 Pipeline Connection:** `DONE` — Implemented in `src/pipeline/workflow.py` (`MeetingPipeline`).
-- **Stage 3 (Meeting Documentation & Task Extraction):** `NOT STARTED` / `NEEDS DECISION` — Placeholder created in `src/summarization/summarizer.py`. Model selection and structured schema design required before coding.
+- **Stage 3 (Meeting Documentation & Task Extraction):** `DONE` — Implemented in `src/summarization/summarizer.py`. Model selection and structured schema design required before coding.
 - **Interactive UI (Streamlit):** `NOT STARTED` — Scheduled for Checkpoint 7 (`app.py`).
 - **Output / Export Generation:** `NOT STARTED` — Scheduled for Checkpoint 10.
 - **Current Blockers:** None.
@@ -25,10 +25,10 @@
 | **Raw Transcript Review** | Keep raw transcript separate and intact before any post-processing. | `src/pipeline/workflow.py`, `src/stt/transcriber.py` | **Complete** |
 | **Stage 2: Domain-Aware Refinement** | Refine raw transcript to fix domain terms, acronyms, and phonetic misrecognitions while strictly preserving names, numbers, negations, and intent. | `src/refinement/refiner.py`, `prompts/stage2_refine.txt`, `refine.py` | **Complete** |
 | **Distinct Language-Model Stages** | Stage 2 (refinement) and Stage 3 (minutes/tasks) must be decoupled as independent model calls with separate prompts and responsibilities. | `src/refinement/`, `src/summarization/`, `src/pipeline/` | **Enforced in Architecture** |
-| **Stage 3: Concise Meeting Summary & Minutes** | Synthesize refined transcript into organized account of discussion points. | `src/summarization/summarizer.py` | *Pending Checkpoint 5* |
-| **Stage 3: Key Decisions Extraction** | Record only agreed-upon decisions; proposals/suggestions must not be marked as decisions; empty list if none reached. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Pending Checkpoint 5* |
-| **Stage 3: Actionable Tasks Extraction** | Record task description, owner, and deadline. If owner or deadline not stated, mark explicitly as `unspecified`. No unstated assignments. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Pending Checkpoint 5* |
-| **Dual Format Records** | Produce final meeting record in both human-readable Markdown and machine-readable structured JSON conveying identical information. | `src/summarization/summarizer.py`, `outputs/` | *Pending Checkpoint 5 & 10* |
+| **Stage 3: Concise Meeting Summary & Minutes** | Synthesize refined transcript into organized account of discussion points. | `src/summarization/summarizer.py` | *Complete* |
+| **Stage 3: Key Decisions Extraction** | Record only agreed-upon decisions; proposals/suggestions must not be marked as decisions; empty list if none reached. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
+| **Stage 3: Actionable Tasks Extraction** | Record task description, owner, and deadline. If owner or deadline not stated, mark explicitly as `unspecified`. No unstated assignments. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
+| **Dual Format Records** | Produce final meeting record in both human-readable Markdown and machine-readable structured JSON conveying identical information. | `src/summarization/summarizer.py`, `outputs/` | *Complete & 10* |
 | **Interactive Interface** | Web application allowing audio upload, processing trigger, progress status, transcript inspection, and download buttons. | `app.py` | *Pending Checkpoint 7* |
 | **Downloadable Outputs** | Export buttons for raw transcript, refined transcript, minutes, decisions, and action items in JSON and Markdown. | `app.py`, `src/pipeline/workflow.py` | *Pending Checkpoint 10* |
 | **Submission Quality & Reproducibility** | Full instructions, requirements, setup scripts, sample audio, and verification tests. | `README.md`, `DEV_GUIDE.md`, `requirements.txt`, `tests/` | **Complete** |
@@ -264,8 +264,8 @@ All prompt templates are stored externally in the `prompts/` directory:
 - [x] **CHECKPOINT 1 — STT Working Independently:** `src/stt/transcriber.py` verified with unit tests and sample audio.
 - [x] **CHECKPOINT 2 — Stage 2 LLM Working Independently:** `src/refinement/refiner.py` verified with Gemini API and domain test inputs.
 - [x] **CHECKPOINT 3 — Stage 1 → Stage 2 Integration:** `MeetingPipeline` orchestrating raw STT output directly into refinement model.
-- [ ] **CHECKPOINT 4 — Stage 3 LLM Selection:** Formalize model selection and API approach for meeting minutes and task extraction.
-- [ ] **CHECKPOINT 5 — Stage 3 Implementation:** Build `src/summarization/summarizer.py` with structured schema enforcement (Pydantic).
+- [x] **CHECKPOINT 4 — Stage 3 LLM Selection:** Formalize model selection and API approach for meeting minutes and task extraction.
+- [x] **CHECKPOINT 5 — Stage 3 Implementation:** Build `src/summarization/summarizer.py` with structured schema enforcement (Pydantic).
 - [ ] **CHECKPOINT 6 — Full Pipeline Integration:** Connect Stage 1 -> Stage 2 -> Stage 3 end-to-end with validation.
 - [ ] **CHECKPOINT 7 — Streamlit UI:** Build interactive interface in `app.py` with file upload, live progress indicators, and transcript views.
 - [ ] **CHECKPOINT 8 — Error Handling & Edge Cases:** Robust handling of empty files, noisy audio, API rate limits, and network dropouts.
@@ -282,7 +282,7 @@ All prompt templates are stored externally in the `prompts/` directory:
 2. **Project Reorganization:** Restructured flat directory into clean `src/` modular layout with `stt`, `refinement`, `summarization`, `pipeline`, and `utils`.
 3. **Stage 1 (STT):** Encapsulated `faster-whisper-large-v3-turbo` with lazy loading, audio validation, int8 quantization, and independent test runner.
 4. **Stage 2 (Refinement):** Encapsulated `gemini-3.5-flash-lite` with externalized prompt template (`prompts/stage2_refine.txt`) and independent test runner.
-5. **Sample Audio Relocation:** Moved `WhatsApp Audio 2026-10-04 at 5.09.09 PM.mpeg` to `assets/audio/` using `git mv` to preserve Git history.
+5. **Sample Audio Relocation:** Moved `whatsapp-audio-2026-10-04-at-50909-pm_Sgw8gMZq.mp3` to `assets/audio/` using `git mv` to preserve Git history.
 6. **Environment & Git Hygiene:** Created `.env.example`, updated `.gitignore` for Python artifacts and outputs, and added `google-genai` to `requirements.txt`.
 7. **Regression Testing:** Both `tests/test_stt.py` and `tests/test_refine.py` execute and pass cleanly.
 
@@ -309,7 +309,7 @@ All prompt templates are stored externally in the `prompts/` directory:
 
 ## K. KNOWN BUGS / RISKS
 
-1. **CPU Execution Latency:** Whisper `large-v3-turbo` on CPU requires ~1.5x–3x real-time duration. For a 13-minute audio recording, transcription takes several minutes on CPU. Users must be notified with clear progress spinners in the UI.
+1. **CPU Execution Latency:** Whisper `large-v3-turbo` on CPU requires ~1.5x–3x real-time duration. For a 2-minute audio recording, transcription takes several minutes on CPU. Users must be notified with clear progress spinners in the UI.
 2. **Gemini Automatic Function Calling Warning:** The SDK generates a minor warning: `"Direct use of automatic function calling (AFC) in Models.generate_content is not recommended"`. This is purely an SDK notice and does not affect text generation, but can be silenced or addressed via clean configuration.
 3. **Free-Tier API Rate Limits:** Google Gemini free-tier keys are subject to Requests Per Minute (RPM) and Requests Per Day (RPD) limits. Repeated rapid tests may trigger 429 quota exhaustion.
 4. **Windows Path Separators:** Always use `pathlib.Path` or raw strings to avoid Windows backslash escaping errors.

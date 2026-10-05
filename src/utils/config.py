@@ -19,7 +19,7 @@ load_dotenv(dotenv_path=ENV_FILE)
 # Default model identifiers
 DEFAULT_STT_MODEL = "large-v3-turbo"
 DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash-lite"
-DEFAULT_DOCUMENTATION_MODEL = None  # To be decided in Checkpoint 4 (Stage 3 selection)
+DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash"  # Supports robust Structured Outputs (Pydantic)
 
 def get_gemini_api_key() -> str:
     """
