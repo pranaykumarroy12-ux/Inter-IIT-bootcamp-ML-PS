@@ -61,6 +61,9 @@ def _convert_schema_to_markdown(record: MeetingRecordSchema) -> str:
 
 # --- Main Generation Logic ---
 
+from src.utils.retries import with_retries
+
+@with_retries(max_retries=3)
 def generate_meeting_documentation(
     refined_transcript: str,
     model_name: str = DEFAULT_DOCUMENTATION_MODEL,

@@ -391,6 +391,6 @@ Checkpoint 12: Final PS Compliance Audit           [ PENDING ]
 | **Domain-Aware Refinement** | 20 pts | Gemini prompt explicitly instructs correcting technical terms while preserving negations, numbers, and names. | **Implemented & Verified** |
 | **Accurate Minutes & Decisions** | 25 pts | Prompt rules enforce recording only confirmed decisions without inventing claims. | *Pending Stage 3* |
 | **Actionable Tasks & Anti-Hallucination** | 15 pts | Unstated owners and deadlines must be marked as `unspecified`. No fabricated assignments. | *Pending Stage 3* |
-| **End-to-End Application & UI** | 15 pts | Streamlit app accepting audio upload, displaying intermediate transcripts, and providing download options. | *Pending Stage 7* |
+| **End-to-End Application & UI** | 15 pts | Streamlit app accepting audio upload, displaying intermediate transcripts, and providing download options. | Implemented |
 | **Submission Quality & Reproducibility** | 5 pts | Comprehensive README, DEV_GUIDE, clear setup steps, sample audio, and clean modular code. | **Compliant** |
 | **Total Evaluation Potential** | **100 pts** | | |

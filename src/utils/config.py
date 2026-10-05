@@ -19,7 +19,8 @@ load_dotenv(dotenv_path=ENV_FILE)
 # Default model identifiers
 DEFAULT_STT_MODEL = "large-v3-turbo"
 DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash-lite"
-DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash"  # Supports robust Structured Outputs (Pydantic)
+# Downgraded to flash-lite to bypass the 20-request daily limit on standard flash
+DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash-lite"
 
 def get_gemini_api_key() -> str:
     """

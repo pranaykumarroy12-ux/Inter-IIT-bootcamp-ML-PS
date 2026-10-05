@@ -10,8 +10,8 @@
 - **Stage 2 (Domain-Aware Refinement):** `DONE` — Implemented in `src/refinement/refiner.py` using Google Gemini (`gemini-3.5-flash-lite`) via `google-genai` SDK. Prompt template externalized to `prompts/stage2_refine.txt`. Independently verified with tests.
 - **Stage 1 → Stage 2 Pipeline Connection:** `DONE` — Implemented in `src/pipeline/workflow.py` (`MeetingPipeline`).
 - **Stage 3 (Meeting Documentation & Task Extraction):** `DONE` — Implemented in `src/summarization/summarizer.py`. Model selection and structured schema design required before coding.
-- **Interactive UI (Streamlit):** `NOT STARTED` — Scheduled for Checkpoint 7 (`app.py`).
-- **Output / Export Generation:** `NOT STARTED` — Scheduled for Checkpoint 10.
+- **Interactive UI (Streamlit):** `DONE` — Implemented (`app.py`).
+- **Output / Export Generation:** `DONE` — Implemented.
 - **Current Blockers:** None.
 
 ---
@@ -29,8 +29,8 @@
 | **Stage 3: Key Decisions Extraction** | Record only agreed-upon decisions; proposals/suggestions must not be marked as decisions; empty list if none reached. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
 | **Stage 3: Actionable Tasks Extraction** | Record task description, owner, and deadline. If owner or deadline not stated, mark explicitly as `unspecified`. No unstated assignments. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
 | **Dual Format Records** | Produce final meeting record in both human-readable Markdown and machine-readable structured JSON conveying identical information. | `src/summarization/summarizer.py`, `outputs/` | *Complete & 10* |
-| **Interactive Interface** | Web application allowing audio upload, processing trigger, progress status, transcript inspection, and download buttons. | `app.py` | *Pending Checkpoint 7* |
-| **Downloadable Outputs** | Export buttons for raw transcript, refined transcript, minutes, decisions, and action items in JSON and Markdown. | `app.py`, `src/pipeline/workflow.py` | *Pending Checkpoint 10* |
+| **Interactive Interface** | Web application allowing audio upload, processing trigger, progress status, transcript inspection, and download buttons. | `app.py` | Complete |
+| **Downloadable Outputs** | Export buttons for raw transcript, refined transcript, minutes, decisions, and action items in JSON and Markdown. | `app.py`, `src/pipeline/workflow.py` | Complete |
 | **Submission Quality & Reproducibility** | Full instructions, requirements, setup scripts, sample audio, and verification tests. | `README.md`, `DEV_GUIDE.md`, `requirements.txt`, `tests/` | **Complete** |
 
 ---
@@ -267,10 +267,10 @@ All prompt templates are stored externally in the `prompts/` directory:
 - [x] **CHECKPOINT 4 — Stage 3 LLM Selection:** Formalize model selection and API approach for meeting minutes and task extraction.
 - [x] **CHECKPOINT 5 — Stage 3 Implementation:** Build `src/summarization/summarizer.py` with structured schema enforcement (Pydantic).
 - [ ] **CHECKPOINT 6 — Full Pipeline Integration:** Connect Stage 1 -> Stage 2 -> Stage 3 end-to-end with validation.
-- [ ] **CHECKPOINT 7 — Streamlit UI:** Build interactive interface in `app.py` with file upload, live progress indicators, and transcript views.
+- [x] **CHECKPOINT 7 — Streamlit UI:** Build interactive interface in `app.py` with file upload, live progress indicators, and transcript views.
 - [ ] **CHECKPOINT 8 — Error Handling & Edge Cases:** Robust handling of empty files, noisy audio, API rate limits, and network dropouts.
 - [ ] **CHECKPOINT 9 — Testing & Verification:** End-to-end integration tests on sample meeting recordings.
-- [ ] **CHECKPOINT 10 — Output / Download Functionality:** Dual format export buttons (JSON and Markdown download).
+- [x] **CHECKPOINT 10 — Output / Download Functionality:** Dual format export buttons (JSON and Markdown download).
 - [x] **CHECKPOINT 11 — Documentation:** Comprehensive `README.md` and `DEV_GUIDE.md`.
 - [ ] **CHECKPOINT 12 — Final PS Compliance Audit:** Verification against the 100-point evaluation rubric prior to submission.
 

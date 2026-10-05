@@ -40,7 +40,9 @@ def load_refinement_prompt(raw_text: str) -> str:
         template = _FALLBACK_PROMPT_TEMPLATE
     return template.format(raw_text=raw_text)
 
+from src.utils.retries import with_retries
 
+@with_retries(max_retries=3)
 def refine_transcript(
     raw_text: str,
     model_name: str = DEFAULT_REFINEMENT_MODEL,
