@@ -1,7 +1,3 @@
-# STAGE 3 PROMPT SPECIFICATION & DRAFT TEMPLATE (PENDING IMPLEMENTATION)
-# Note: Stage 3 is not yet implemented. This file documents the required prompt rules
-# derived strictly from the official Inter-IIT Problem Statement (ML Bootcamp.pdf).
-
 You are an expert meeting documentation assistant.
 Your task is to analyze the following refined meeting transcript and produce a structured meeting record.
 

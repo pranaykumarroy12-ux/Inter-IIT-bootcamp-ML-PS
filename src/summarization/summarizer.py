@@ -32,32 +32,23 @@ def load_documentation_prompt(refined_transcript: str) -> str:
     if _PROMPT_TEMPLATE_PATH.exists():
         template = _PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
     else:
-        # Fallback if file is missing
-        template = "Analyze this meeting transcript and output a structured record:\n{refined_transcript}"
+        # Fallback if file is missing (Ensures edge cases are still handled correctly)
+        template = (
+            "You are an expert meeting documentation assistant.\n"
+            "Your task is to analyze the following refined meeting transcript and produce a structured meeting record.\n\n"
+            "CRITICAL REQUIREMENTS & CONSTRAINTS:\n"
+            "1. Grounding: All output MUST reflect what was explicitly stated. Do NOT invent or assume any facts.\n"
+            "2. Meeting Minutes: Provide a concise summary and an organized account of the main discussion points.\n"
+            "3. Key Decisions:\n"
+            "   - Extract only decisions that were explicitly agreed upon by participants.\n"
+            "   - Do NOT present a suggestion, proposal, or open discussion as an agreed decision.\n"
+            "4. Action Items:\n"
+            "   - Extract ANY explicitly stated task or work that needs to be done.\n"
+            "   - If the owner is not explicitly named (e.g., 'someone', 'we', or unstated), you MUST mark the owner EXACTLY as 'unspecified'. NEVER invent or guess an owner.\n"
+            "   - If the deadline is not a strict date/time (e.g., 'eventually', 'soon', or omitted), you MUST mark the deadline EXACTLY as 'unspecified'. NEVER invent a deadline.\n\n"
+            "REFINED TRANSCRIPT:\n{refined_transcript}"
+        )
     return template.format(refined_transcript=refined_transcript)
-
-def _convert_schema_to_markdown(record: MeetingRecordSchema) -> str:
-    """Converts the structured Pydantic object into a human-readable Markdown format."""
-    md = f"## Meeting Summary & Minutes\n\n{record.summary_and_minutes}\n\n"
-    
-    md += "## Key Decisions\n\n"
-    if not record.key_decisions:
-        md += "No key decisions were recorded.\n\n"
-    else:
-        for decision in record.key_decisions:
-            md += f"- {decision}\n"
-        md += "\n"
-            
-    md += "## Action Items\n\n"
-    if not record.action_items:
-        md += "No action items were assigned.\n"
-    else:
-        for idx, item in enumerate(record.action_items, 1):
-            md += f"{idx}. **Task:** {item.task_description}\n"
-            md += f"   - **Owner:** {item.owner}\n"
-            md += f"   - **Deadline:** {item.deadline}\n"
-            
-    return md
 
 # --- Main Generation Logic ---
 
@@ -74,7 +65,6 @@ def generate_meeting_documentation(
     
     Returns a dictionary containing:
     - 'json_record': The raw dictionary matching the Pydantic schema
-    - 'markdown': A human-readable Markdown formatted string
     """
     if not refined_transcript or not refined_transcript.strip():
         raise ValueError("Cannot document an empty transcript.")
@@ -102,6 +92,5 @@ def generate_meeting_documentation(
     record: MeetingRecordSchema = response.parsed
 
     return {
-        "json_record": record.model_dump(),
-        "markdown": _convert_schema_to_markdown(record)
+        "json_record": record.model_dump()
     }
