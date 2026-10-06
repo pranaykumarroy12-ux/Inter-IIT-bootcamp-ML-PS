@@ -17,10 +17,11 @@ ENV_FILE = PROJECT_ROOT / ".env"
 load_dotenv(dotenv_path=ENV_FILE)
 
 # Default model identifiers
-DEFAULT_STT_MODEL = "large-v3-turbo"
-DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash-lite"
-# Downgraded to flash-lite to bypass the 20-request daily limit on standard flash
-DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash-lite"
+# Switched to Groq for ultra-fast Whisper API transcription
+DEFAULT_STT_MODEL = "whisper-large-v3"
+DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash"
+# Upgraded back to standard flash for maximum logic capabilities
+DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash"
 
 def get_gemini_api_key() -> str:
     """
@@ -32,5 +33,18 @@ def get_gemini_api_key() -> str:
         raise ValueError(
             "GEMINI_API_KEY is not set in environment or .env file. "
             "Please create a .env file based on .env.example."
+        )
+    return api_key
+
+def get_groq_api_key() -> str:
+    """
+    Retrieve Groq API key from environment variables.
+    Raises ValueError if key is not configured.
+    """
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY is not set in environment or .env file. "
+            "Please add your Groq API key to your .env file."
         )
     return api_key

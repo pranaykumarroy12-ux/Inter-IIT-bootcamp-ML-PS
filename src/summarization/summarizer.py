@@ -17,8 +17,8 @@ _PROMPT_TEMPLATE_PATH = PROMPTS_DIR / "stage3_document.txt"
 
 class ActionItem(BaseModel):
     task_description: str = Field(description="The actionable task to be done.")
-    owner: str = Field(description="The assigned person. If not explicitly stated, MUST be 'unspecified'.")
-    deadline: str = Field(description="The task deadline. If not explicitly stated, MUST be 'unspecified'.")
+    owner: str = Field(description="The explicitly named assigned person. If assigned to 'someone', 'we', or not named, output exactly 'unspecified'.")
+    deadline: str = Field(description="The strict date or time deadline. If the audio uses vague terms (like 'eventually', 'soon', 'later') or if it is missing, output exactly 'unspecified'.")
 
 class MeetingRecordSchema(BaseModel):
     summary_and_minutes: str = Field(description="Concise summary and organized account of the main discussion points. Use markdown formatting (headings/bullets) inside this string.")

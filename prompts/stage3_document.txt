@@ -13,12 +13,13 @@ CRITICAL REQUIREMENTS & CONSTRAINTS:
    - Do NOT present a suggestion, proposal, or open discussion as an agreed decision.
    - If no decisions were reached, return an empty list.
 4. Action Items:
-   - Extract actionable tasks explicitly mentioned.
-   - For each task, record: task description, owner (if stated), and deadline (if stated).
-   - If owner is not explicitly stated in the transcript, mark owner as "unspecified". NEVER invent or guess an owner.
-   - If deadline is not explicitly stated in the transcript, mark deadline as "unspecified". NEVER invent or guess a deadline.
+   - Extract ANY explicitly stated task or work that needs to be done, even if it is vague, assigned to "someone", or lacks a deadline (e.g., "Someone needs to fix the bug eventually").
+   - For each task, record: task description, owner, and deadline.
+   - If the owner is not explicitly named (e.g., "someone", "we", or unstated), you MUST mark the owner EXACTLY as "unspecified". NEVER invent or guess an owner.
+   - If the deadline is not a strict date/time (e.g., "eventually", "no rush", or omitted), you MUST mark the deadline EXACTLY as "unspecified". NEVER invent or guess a deadline.
+   - Do NOT ignore vague tasks. If the transcript states work needs to be done, it is an action item.
    - Do NOT present an unstated assignment as a confirmed task.
-   - If no action items were assigned, return an empty list.
+   - If no action items were assigned at all, return an empty list.
 5. Formats Required:
    - Machine-readable structured JSON format.
    - Human-readable Markdown format.

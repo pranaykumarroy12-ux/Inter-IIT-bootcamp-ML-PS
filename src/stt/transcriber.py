@@ -1,70 +1,46 @@
 """
-Stage 1: Speech-to-Text Transcriber.
-Implements speech transcription using faster-whisper (large-v3-turbo).
+Stage 1: Speech-to-Text Module.
+Transcribes audio recordings into raw transcripts using the Groq Whisper API.
 """
 
-from pathlib import Path
-from typing import Optional, Union
-from faster_whisper import WhisperModel
-from src.utils.audio import validate_audio_file
-from src.utils.config import DEFAULT_STT_MODEL
-
-_CACHED_MODEL: Optional[WhisperModel] = None
-
-def get_whisper_model(
-    model_size: str = DEFAULT_STT_MODEL,
-    device: str = "cpu",
-    compute_type: str = "int8"
-) -> WhisperModel:
-    """
-    Lazily loads and caches the WhisperModel instance to avoid redundant reload overhead.
-    """
-    global _CACHED_MODEL
-    if _CACHED_MODEL is None:
-        print(f"Loading Whisper model '{model_size}' (device={device}, compute_type={compute_type})...")
-        _CACHED_MODEL = WhisperModel(
-            model_size,
-            device=device,
-            compute_type=compute_type
-        )
-        print("Whisper model loaded successfully!")
-    return _CACHED_MODEL
-
+import os
+from typing import Optional
+from groq import Groq
+from src.utils.config import get_groq_api_key, DEFAULT_STT_MODEL
 
 def transcribe_audio(
-    audio_file: Union[str, Path],
-    model: Optional[WhisperModel] = None,
-    beam_size: int = 5,
-    vad_filter: bool = True
+    audio_path: str,
+    model_name: str = DEFAULT_STT_MODEL,
+    client: Optional[Groq] = None
 ) -> str:
     """
-    Transcribes an audio file into a raw text transcript using faster-whisper.
-
+    Transcribes an audio file using Groq's high-speed Whisper API.
+    
     Args:
-        audio_file: Path to the audio file.
-        model: Optional pre-loaded WhisperModel. If None, uses cached default.
-        beam_size: Beam search width (default: 5).
-        vad_filter: Whether to apply Voice Activity Detection filtering (default: True).
-
+        audio_path: Path to the audio file.
+        model_name: The Groq model identifier (e.g., whisper-large-v3).
+        client: Optional pre-configured Groq client instance.
+        
     Returns:
-        str: Raw transcript text.
-
-    Raises:
-        ValueError: If audio file validation fails.
+        str: The raw transcribed text.
     """
-    is_valid, msg = validate_audio_file(audio_file)
-    if not is_valid:
-        raise ValueError(f"Invalid audio input: {msg}")
+    if not os.path.exists(audio_path):
+        raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-    if model is None:
-        model = get_whisper_model()
-
-    audio_path_str = str(Path(audio_file).resolve())
-    segments, info = model.transcribe(
-        audio_path_str,
-        beam_size=beam_size,
-        vad_filter=vad_filter
-    )
-
-    transcript = " ".join(segment.text.strip() for segment in segments if segment.text)
-    return transcript.strip()
+    if client is None:
+        client = Groq(api_key=get_groq_api_key())
+        
+    print(f"Transcribing {audio_path} via Groq API...")
+    
+    with open(audio_path, "rb") as file:
+        transcription = client.audio.transcriptions.create(
+            file=(os.path.basename(audio_path), file.read()),
+            model=model_name,
+            # We can use the prompt parameter to guide Whisper's spelling
+            # but Whisper doesn't follow strict instructions like Gemini does.
+            prompt="Meeting transcription, software engineering, domain terms.",
+            response_format="text",
+            language="en" # Force English transcription
+        )
+        
+    return transcription.strip()
