@@ -27,6 +27,10 @@ def render_processing():
         st.session_state.start_processing = False
         st.session_state.pipeline_results = None
         
+        # Explicitly clear old chat history so a new file doesn't inherit old questions
+        if "chat_messages" in st.session_state:
+            del st.session_state["chat_messages"]
+            
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file.name.split('.')[-1]}") as tmp_file:
                 tmp_file.write(file.read())

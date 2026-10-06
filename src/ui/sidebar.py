@@ -8,6 +8,7 @@ def render_sidebar():
         ("🏠", "Home"),
         ("⚙️", "Processing"),
         ("📄", "Meeting Record"),
+        ("💬", "Chat Assistant"),
         ("📑", "Transcripts"),
         ("✦", "AI Highlights"),
         ("⬇️", "Downloads")

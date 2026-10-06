@@ -1,0 +1,16 @@
+[theme]
+# Primary accent color (replaces the default Streamlit red/pink)
+# Used for chat input borders, checkboxes, radio buttons, etc.
+primaryColor = "#4F46E5"
+
+# Main background color (Dark Navy)
+backgroundColor = "#0B1120"
+
+# Secondary background color for sidebar and most cards (Lighter Navy)
+secondaryBackgroundColor = "#0F172A"
+
+# Main text color
+textColor = "#F8FAFC"
+
+# Font
+font = "sans serif"

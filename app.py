@@ -13,6 +13,7 @@ from src.ui.sidebar import render_sidebar
 from src.ui.home import render_home
 from src.ui.processing import render_processing
 from src.ui.meeting_record import render_meeting_record
+from src.ui.chat import render_chat
 from src.ui.transcripts import render_transcripts
 from src.ui.highlights import render_highlights
 from src.ui.downloads import render_downloads
@@ -44,6 +45,8 @@ elif page == "Processing":
     render_processing()
 elif page == "Meeting Record":
     render_meeting_record()
+elif page == "Chat Assistant":
+    render_chat()
 elif page == "Transcripts":
     render_transcripts()
 elif page == "AI Highlights":
