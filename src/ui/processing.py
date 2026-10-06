@@ -41,12 +41,20 @@ def render_processing():
                 st.write("Converting audio to raw transcript using Groq Whisper API...")
                 raw_transcript = pipeline.run_transcription(temp_audio_path)
                 stage1_time = time.time() - t0
-                if not raw_transcript or not raw_transcript.strip():
+                
+                # Edge Case 1 Handling: Filter out Whisper Hallucinations on silent audio
+                cleaned_text = raw_transcript.strip().lower()
+                is_hallucination = any(h in cleaned_text for h in [
+                    "thank you", "thanks for watching", "please subscribe", "subtitles"
+                ]) and len(cleaned_text.split()) < 10
+                
+                if not cleaned_text or is_hallucination or len(cleaned_text.split()) < 3:
                     status1.update(label="Stage 1 Failed", state="error", expanded=True)
-                    st.warning("⚠️ No speech was detected in this audio file.")
+                    st.warning("⚠️ No meaningful speech was detected in this audio file. Please upload a recording with actual dialogue.")
                     if 'temp_audio_path' in locals() and os.path.exists(temp_audio_path):
                         os.remove(temp_audio_path)
                     st.stop()
+                    
                 status1.update(label=f"✓ Stage 1: Speech-to-Text (Completed in {stage1_time:.1f}s)", state="complete", expanded=False)
             
             # Stage 2

@@ -19,9 +19,9 @@ load_dotenv(dotenv_path=ENV_FILE)
 # Default model identifiers
 # Switched to Groq for ultra-fast Whisper API transcription
 DEFAULT_STT_MODEL = "whisper-large-v3"
-DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash"
-# Upgraded back to standard flash for maximum logic capabilities
-DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash"
+DEFAULT_REFINEMENT_MODEL = "gemini-3.5-flash-lite"
+# Downgraded back to flash-lite to bypass the 20-request daily limit on standard flash
+DEFAULT_DOCUMENTATION_MODEL = "gemini-3.5-flash-lite"
 
 def get_gemini_api_key() -> str:
     """

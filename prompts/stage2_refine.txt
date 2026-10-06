@@ -5,7 +5,7 @@ Your task is to clean and refine the following meeting transcript.
 Rules:
 - ONLY correct obvious technical domain terms, acronyms, and phonetic mishearings (e.g., if the STT heard "you art" instead of "UART").
 - Explicitly DELETE all conversational filler words (e.g., "uh", "um", "ah", "you know") and stuttering.
-- The raw transcript lacks speaker labels. You MUST analyze the conversational flow and explicitly inject speaker labels (e.g., "Speaker 1:", "Speaker 2:") where the speaker logically changes.
+- The raw transcript lacks speaker labels. Analyze the flow and inject speaker labels. IMPORTANT: If a speaker's name can be logically deduced from the conversation (e.g., "Hi, I'm Sarah", "What do you think, John?"), use their REAL NAME as the label (e.g., "Sarah:", "John:"). Only fall back to "Speaker 1:", "Speaker 2:" if their name is never mentioned.
 - DO NOT act as a grammar checker. DO NOT rewrite sentences or "improve" standard vocabulary (e.g., never change valid words like "essence" to "emphasis").
 - If a non-technical word makes logical sense, leave it EXACTLY as it was spoken.
 - Preserve the speaker's exact intended meaning, tone, and stylistic choices.

@@ -20,18 +20,18 @@
 
 | PS Requirement | Implementation Strategy | File(s) | Status |
 |---|---|---|---|
-| **Audio Input & Validation** | Validate file existence, >0 bytes size, supported extensions (`.mp3`, `.wav`, `.mpeg`, etc.) with clear error messaging. | `src/utils/audio.py` | **Complete** |
-| **Stage 1: Speech-to-Text** | Transcribe spoken English meeting audio to verbatim raw transcript using `faster-whisper` `large-v3-turbo`. | `src/stt/transcriber.py`, `stt.py` | **Complete** |
-| **Raw Transcript Review** | Keep raw transcript separate and intact before any post-processing. | `src/pipeline/workflow.py`, `src/stt/transcriber.py` | **Complete** |
-| **Stage 2: Domain-Aware Refinement** | Refine raw transcript to fix domain terms, acronyms, and phonetic misrecognitions while strictly preserving names, numbers, negations, and intent. | `src/refinement/refiner.py`, `prompts/stage2_refine.txt`, `refine.py` | **Complete** |
+| **Audio Input & Validation** | Validate file existence, >0 bytes size, supported extensions (`.mp3`, `.wav`, `.mpeg`, etc.) with clear error messaging. | `src/utils/audio.py` | ***Complete*** |
+| **Stage 1: Speech-to-Text** | Transcribe spoken English meeting audio to verbatim raw transcript using `faster-whisper` `large-v3-turbo`. | `src/stt/transcriber.py`, `stt.py` | ***Complete*** |
+| **Raw Transcript Review** | Keep raw transcript separate and intact before any post-processing. | `src/pipeline/workflow.py`, `src/stt/transcriber.py` | ***Complete*** |
+| **Stage 2: Domain-Aware Refinement** | Refine raw transcript to fix domain terms, acronyms, and phonetic misrecognitions while strictly preserving names, numbers, negations, and intent. | `src/refinement/refiner.py`, `prompts/stage2_refine.txt`, `refine.py` | ***Complete*** |
 | **Distinct Language-Model Stages** | Stage 2 (refinement) and Stage 3 (minutes/tasks) must be decoupled as independent model calls with separate prompts and responsibilities. | `src/refinement/`, `src/summarization/`, `src/pipeline/` | **Enforced in Architecture** |
-| **Stage 3: Concise Meeting Summary & Minutes** | Synthesize refined transcript into organized account of discussion points. | `src/summarization/summarizer.py` | *Complete* |
-| **Stage 3: Key Decisions Extraction** | Record only agreed-upon decisions; proposals/suggestions must not be marked as decisions; empty list if none reached. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
-| **Stage 3: Actionable Tasks Extraction** | Record task description, owner, and deadline. If owner or deadline not stated, mark explicitly as `unspecified`. No unstated assignments. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | *Complete* |
-| **Dual Format Records** | Produce final meeting record in both human-readable Markdown and machine-readable structured JSON conveying identical information. | `src/summarization/summarizer.py`, `outputs/` | *Complete & 10* |
+| **Stage 3: Concise Meeting Summary & Minutes** | Synthesize refined transcript into organized account of discussion points. | `src/summarization/summarizer.py` | **Complete** |
+| **Stage 3: Key Decisions Extraction** | Record only agreed-upon decisions; proposals/suggestions must not be marked as decisions; empty list if none reached. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | **Complete** |
+| **Stage 3: Actionable Tasks Extraction** | Record task description, owner, and deadline. If owner or deadline not stated, mark explicitly as `unspecified`. No unstated assignments. | `prompts/stage3_document.txt`, `src/summarization/summarizer.py` | **Complete** |
+| **Dual Format Records** | Produce final meeting record in both human-readable Markdown and machine-readable structured JSON conveying identical information. | `src/summarization/summarizer.py`, `outputs/` | ***Complete*** |
 | **Interactive Interface** | Web application allowing audio upload, processing trigger, progress status, transcript inspection, and download buttons. | `app.py` | Complete |
 | **Downloadable Outputs** | Export buttons for raw transcript, refined transcript, minutes, decisions, and action items in JSON and Markdown. | `app.py`, `src/pipeline/workflow.py` | Complete |
-| **Submission Quality & Reproducibility** | Full instructions, requirements, setup scripts, sample audio, and verification tests. | `README.md`, `DEV_GUIDE.md`, `requirements.txt`, `tests/` | **Complete** |
+| **Submission Quality & Reproducibility** | Full instructions, requirements, setup scripts, sample audio, and verification tests. | `README.md`, `DEV_GUIDE.md`, `requirements.txt`, `tests/` | ***Complete*** |
 
 ---
 
@@ -223,7 +223,7 @@
 - **Model Identifier:** *Not implemented/selected yet.*
 - **Role:** Synthesis of the refined transcript into concise minutes, verified key decisions, and actionable tasks.
 - **Candidate Options for Checkpoint 4 Decision:**
-  - Option A: `gemini-3.5-flash` or `gemini-2.5-flash` with Pydantic structured output (`response_schema`).
+  - Option A: `gemini-3.5-flash-lite` or `gemini-2.5-flash` with Pydantic structured output (`response_schema`).
   - Option B: `gemini-3.5-flash-lite` with JSON schema enforcement.
   - Option C: Local HuggingFace LLM (e.g., Llama-3 / Qwen-2.5) via `transformers` (heavy on CPU).
 
