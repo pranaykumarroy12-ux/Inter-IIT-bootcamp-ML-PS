@@ -1,6 +1,6 @@
-# AI-Powered Meeting Assistant
+﻿# AI-Powered Meeting Assistant
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-name-here.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-powered-meeting-assistant-brnjz68ygdggmjr7z3en7w.streamlit.app/)
 *(👆 **Live Demo:** Click the badge above to instantly test the deployed web application!)*
 
 > **Inter-IIT Tech Meet 15.0 - ML Bootcamp (Phase 2)**  
