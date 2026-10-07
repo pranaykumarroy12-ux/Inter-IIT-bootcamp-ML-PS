@@ -289,16 +289,19 @@ All AI prompts are externalized in a `prompts/` folder so prompt engineers can t
 
 | Requirement | Constraint | Decision | Trade-off |
 | :--- | :--- | :--- | :--- |
-| **Lightning-fast STT** | Local Whisper models maxed out CPU usage (3+ minutes). | Migrate Stage 1 to **Groq API**. | Lost acoustic diarization, requiring us to build contextual LLM diarization in Stage 2. |
-| **High Logic / Low Cost** | Standard `gemini-3.5-flash` hit strict 20-request/day free limits. | Downgrade to **`gemini-3.5-flash-lite`**. | Slight drop in complex reasoning, but enables 1500+ requests/day for unblocked testing and chat. |
-| **Anti-Hallucination** | LLMs instinctively guess missing names/dates. | Implement **Pydantic Structured Outputs**. | Requires strict prompt engineering to force the `"unspecified"` fallback state. |
+| **Zero Hallucination** | Single-shot LLMs hallucinate tasks and combine refinement with extraction, lowering accuracy. | **Decoupled Multi-Stage Pipeline** (Refine, then Extract). | Increased pipeline latency and architectural complexity in exchange for deterministic, verifiable accuracy. |
+| **Speaker Identification** | Acoustic diarization (e.g., Pyannote) is incredibly heavy, slow, and struggles with overlapping speech. | **Contextual LLM Diarization** (Stage 2). | Gained extreme processing speed, but traded off true voice-print recognition (relies on conversation context). |
+| **Strict Factual Tasks** | LLMs instinctively guess missing names/dates for Action Items to please the user. | **Pydantic Schema Enforcement** (Forcing `"unspecified"`). | Sacrificed natural, free-flowing text generation in favor of a rigid, highly-structured JSON format. |
+| **Domain Term Correction** | Fixing jargon can trigger the LLM to "rewrite" and polish the entire sentence. | **Strict "Preserve Style" Prompting**. | Left grammatically poor spoken English intact to strictly preserve the speaker's exact tone and intent. |
 
 ---
 
 ### Speaker Notes
 (9:00 - 9:40)
-"Building this wasn't without challenges. First, we wanted fast transcription, but local CPU inference was way too slow. Moving to Groq solved the speed issue, but we lost Whisper's acoustic speaker tags. We traded acoustic accuracy for contextual LLM diarization in Stage 2. 
-Second, we initially used Gemini 3.5 Flash for the heavy logic, but immediately hit Google's 20-request daily limit. We had to strategically downgrade to `flash-lite` to keep the app highly available without spending money, which required tightening our prompts to keep the logic strict."
+"Building a production AI system is entirely about trade-offs. 
+First, we could have used a single massive LLM prompt to do everything at once, which would be faster to build. Instead, we chose a decoupled multi-stage pipeline. The trade-off is higher architectural complexity and slightly higher network latency, but we gain verifiable, hallucination-free accuracy.
+Second, for speaker identification, traditional acoustic diarization is extremely resource-heavy. We traded acoustic voice-print accuracy for Contextual LLM diarization—giving us blistering speed while relying on the LLM to deduce speakers from conversational cues.
+Finally, to enforce strict truthfulness, we used Pydantic schemas. We traded away the LLM's natural, chatty formatting in favor of rigid, mathematical JSON that forces it to output 'unspecified' rather than guessing a deadline."
 
 ---
 
