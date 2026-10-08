@@ -29,8 +29,10 @@ def render_home():
         
     st.markdown("<br><br>", unsafe_allow_html=True)
     
-    # Upload Card
+        # Upload Card
     st.markdown("### ☁️ Upload Meeting Audio")
+    st.markdown("<p style='color: #94A3B8; font-size: 14px;'><strong>Note:</strong> Due to API constraints, files must be <strong>under 25 MB</strong>. For video files (.mp4), convert them to .mp3 to drastically reduce file size.</p>", unsafe_allow_html=True)
+    
     allowed_extensions = [ext.strip('.') for ext in SUPPORTED_AUDIO_EXTENSIONS]
     
     uploaded_file = st.file_uploader(
@@ -40,10 +42,15 @@ def render_home():
     )
     
     if uploaded_file:
+        file_mb = uploaded_file.size / (1024 * 1024)
         st.session_state.uploaded_file = uploaded_file
-        st.success(f"File loaded: {uploaded_file.name} ({(uploaded_file.size / (1024*1024)):.1f} MB)")
         
-        if st.button("🚀 Process Meeting Audio", type="primary", use_container_width=True):
-            st.session_state.current_page = "Processing"
-            st.session_state.start_processing = True
-            st.rerun()
+        if file_mb > 25:
+            st.error(f"⚠️ File is too large ({file_mb:.1f} MB). Please upload a file under 25 MB.")
+        else:
+            st.success(f"File loaded: {uploaded_file.name} ({file_mb:.1f} MB)")
+            
+            if st.button("🚀 Process Meeting Audio", type="primary", use_container_width=True):
+                st.session_state.current_page = "Processing"
+                st.session_state.start_processing = True
+                st.rerun()
