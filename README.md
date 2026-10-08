@@ -1,102 +1,80 @@
-﻿# AI-Powered Meeting Assistant
+# AI Meeting Assistant
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-powered-meeting-assistant-brnjz68ygdggmjr7z3en7w.streamlit.app/)
-*(👆 **Live Demo:** Click the badge above to instantly test the deployed web application!)*
+*(👆 **Live Demo:** Click the badge above to test the deployed app!)*
 
-> **Inter-IIT Tech Meet 15.0 - ML Bootcamp (Phase 2)**  
-> **Organized by IIT Guwahati Tech Board**  
-> **Submission Deadline:** October 7, 2026
+**Inter-IIT Tech Meet 15.0 - ML Bootcamp (Phase 2)**  
 
 ---
 
-## 1. Project Title
+## 1. Project Overview
 **AI-Powered Meeting Assistant: Multi-Stage Audio Transcription, Domain-Aware Refinement, and Structured Documentation**
 
+This is my submission for the ML Bootcamp. Instead of passing everything into one giant LLM prompt (which usually causes hallucinations), I broke the project down into a 3-stage pipeline. This makes it much faster and a lot easier to debug.
+
 ---
 
-## 2. Technical Description (Model Architecture & Roles)
-This application employs a strict, decoupled three-stage pipeline connecting distinct AI models to ensure speed, accuracy, and truthfulness.
+## 2. How the Pipeline Works
 
 * **Stage 1 (Speech-to-Text):** 
-  * **Model:** `whisper-large-v3` (via Groq API)
-  * **Role:** Transcribes the uploaded English audio file into a raw, word-for-word transcript at ultra-high speeds (processing hour-long meetings in seconds).
-  * **Data Flow:** Audio File → Groq Whisper API → Raw Transcript String.
-* **Stage 2 (Domain-Aware Transcript Refinement):** 
-  * **Model:** `gemini-3.5-flash-lite` (via Google GenAI SDK)
-  * **Role:** Analyzes the raw transcript to correct domain-specific technical jargon, acronyms, and phonetic misrecognitions. It strictly preserves names, numbers, negations, and speaker intent. **Contextual Diarization** is also performed here, where the model logically injects speaker labels (e.g., `Speaker 1:`, `Speaker 2:`) based on conversational shifts.
-  * **Data Flow:** Raw Transcript String → Gemini API (Refinement Prompt) → Refined Transcript String.
-* **Stage 3 (Meeting Documentation & Task Extraction):** 
-  * **Model:** `gemini-3.5-flash-lite` (via Google GenAI SDK with Pydantic Structured Outputs)
-  * **Role:** Synthesizes the refined transcript into organized minutes, verified key decisions, and actionable tasks. The model is structurally forced to return `unspecified` if a task owner or deadline is not explicitly stated in the audio, mathematically preventing hallucinations.
-  * **Data Flow:** Refined Transcript String → Gemini API (Extraction Prompt + Pydantic Schema) → Structured JSON Record & Markdown.
+  * I used `whisper-large-v3` running on the Groq API. 
+  * **Why:** Running Whisper locally was maxing out my CPU and taking too long. Moving it to Groq lets it transcribe audio files in just a few seconds.
+
+* **Stage 2 (Refinement & Diarization):** 
+  * I used `gemini-3.5-flash-lite`.
+  * **Why:** Groq Whisper is fast but doesn't give speaker labels and messes up technical jargon. This Gemini step takes the raw text, figures out who is speaking from context clues, and fixes typos (like changing "you art" to "UART") without changing the actual meaning of the sentences.
+
+* **Stage 3 (Documentation & Extraction):** 
+  * I used `gemini-3.5-flash-lite` again, but this time using Pydantic Structured Outputs.
+  * **Why:** I needed it to return clean JSON for the frontend. By forcing a strict Pydantic schema, I made sure the AI outputs "unspecified" if it can't find an owner or a deadline. This completely stops it from making things up.
 
 ---
 
-## 3. Features & User Interface
-The frontend is a modern, responsive Single Page Application (SPA) built entirely in Streamlit with custom CSS. It features:
-- **Performance Metrics:** Real-time tracking of latency and processing speeds for each pipeline stage.
-- **Embedded Audio Player:** Listen to the source audio while reviewing the transcript.
-- **AI Visual Correction Highlights:** A side-by-side diff viewer that highlights exactly what the AI fixed in green, and what Whisper misspelled in red strikethrough.
-- **Structured Downloads:** Export the final results in `.txt` (Raw & Refined), `.pdf` (Professional Meeting Record), and `.json` (Machine-readable structured data).
+## 3. Features
+I built the frontend using Streamlit. Some cool features include:
+- **Visual Diff Viewer:** You can see exactly what the AI changed. It highlights fixed jargon in green and crosses out Whisper mistakes in red.
+- **RAG Chatbot:** You can chat directly with your meeting transcript in a sidebar tab.
+- **Downloads:** Export the final meeting minutes as a PDF, JSON, or TXT file.
 
 ---
 
 ## 4. Setup & Installation
 
-### Prerequisites
-- Python 3.10+
-- `ffmpeg` installed and added to your system PATH.
+**Prerequisites:** Python 3.10+ and `ffmpeg` installed on your system.
 
-### Step 1: Install Dependencies
-The project has been heavily optimized for speed and low overhead. It relies on an ultra-lean stack (just Streamlit, Groq, Google GenAI, and Pydantic).
+**1. Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 2: Configure API Keys
-The application requires two API keys to run the high-speed pipeline.
-Create a `.env` file in the root directory and add your keys:
+**2. Add your API keys:**
+Create a `.env` file in the root folder and add your keys:
 ```env
-# Google Gemini API Key for Stage 2 (Refinement) & Stage 3 (Documentation)
 GEMINI_API_KEY=your_gemini_api_key_here
-
-# Groq API Key for Stage 1 (Ultra-fast Whisper STT)
 GROQ_API_KEY=your_groq_api_key_here
 ```
 
-### Step 3: Run the Application
-You can launch the dashboard by running the provided batch script (Windows):
+**3. Run the app:**
 ```cmd
+# On Windows, just double-click:
 Start_Meeting_Assistant.bat
-```
-Or manually via Streamlit:
-```bash
+
+# Or run it manually via terminal:
 streamlit run app.py
 ```
 
 ---
 
-## 5. Directory Structure
-```text
-📦 AI-Meeting-Assistant
- ┣ 📂 assets/audio          # Edge-case audio files for testing
- ┣ 📂 prompts/              # Strict rule templates for Stage 2 & 3 LLMs
- ┣ 📂 src/
- ┃ ┣ 📂 pipeline/           # Orchestrates the end-to-end data flow
- ┃ ┣ 📂 refinement/         # Stage 2 implementation
- ┃ ┣ 📂 stt/                # Stage 1 implementation (Groq)
- ┃ ┣ 📂 summarization/      # Stage 3 implementation (Structured Pydantic outputs)
- ┃ ┣ 📂 ui/                 # Streamlit UI Components (Sidebar, Theme, Views)
- ┃ ┗ 📂 utils/              # Helper functions (Config, Audio validation, PDF Export, Visual Diff)
- ┣ 📜 app.py                # Main Streamlit Application Router
- ┣ 📜 DEV_GUIDE.md          # Internal Architecture Documentation
- ┗ 📜 requirements.txt      # Python dependencies
-```
+## 5. Folder Structure
+- `assets/audio/` - Test audio files (including edge cases).
+- `prompts/` - The text files where I keep the rules for the Gemini models.
+- `src/` - All the backend code (split into stt, refinement, summarization, and ui).
+- `app.py` - The main Streamlit file.
 
 ---
 
-## 6. Edge Case Handling (Verification)
-The pipeline has been rigorously tested against edge cases to ensure strict compliance with Inter-IIT rules:
-* **The "Vague Boss" Test:** If an owner/deadline is not explicitly stated (e.g., "Someone needs to fix the bug eventually"), the output strictly logs the Action Item with `"owner": "unspecified"` and `"deadline": "unspecified"`.
-* **The "Brainstorm" Test:** If participants merely propose ideas without reaching a final agreement, the `key_decisions` array remains perfectly empty `[]`. Proposals are never logged as confirmed decisions.
-* **The "Empty Room" Test:** The pipeline detects whitespace/empty audio early, gracefully halting processing with a UI warning to save API quotas and prevent crashes.
+## 6. Testing Edge Cases
+I made sure the app handles the specific edge cases mentioned in the problem statement:
+* **The "Vague Task" Test:** If someone says "we need to fix this eventually", the JSON output strictly says `"owner": "unspecified"` and `"deadline": "unspecified"`.
+* **The "Brainstorm" Test:** If people just throw around ideas but don't decide on anything, the `key_decisions` list comes back completely empty instead of hallucinating fake decisions.
+* **Empty Audio:** If you upload a silent file, Whisper sometimes hallucinates phrases like "Thank you for watching". I added a script to catch this and stop the pipeline so it doesn't waste API calls.
